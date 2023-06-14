@@ -1,0 +1,22 @@
+DB-Dokumentation
+Verwendete Software:
+•	DB-System: MySQL/MariaDB
+•	Dokumentations-Software: MS Word (PHPMyAdmin als Website am Webserver)
+Datenbank
+Verwendete Tabellen:
+•	tbl_raeume: Stellt die im Schulgebäude vorhandenen Räume dar
+•	tbl_lehrer: Beinhaltet sämtliche an der Schule tätigen Lehrer (unabhängig davon, ob sie Klassenvorstand einer Klasse sind oder nicht)
+•	tbl_klassen: Stellt sämtliche Klassen eines Schuljahres dar, wobei jeder Klasse eindeutig ein Raum und ein Klassenvorstand zugewiesen wird; die Klassenbezeichnung ist ebenfalls eindeutig
+•	tbl_schueler: Beinhaltet sämtliche SchülerInnen der Schule, wobei jede/r SchülerIn eindeutig in eine Klasse geht
+Tabellen
+Bitte beachten Sie das beigelegte PDF-Dokument („Schema“), in welcher die Tabellen dokumentiert sind: DB-Schema.
+Constraints
+Generell gilt: Für sämtliche verwendeten Constraints in dieser Datenbank wird festgelegt, dass bei einem UPDATE ein CASCADE zum Einsatz gebracht wird.
+•	tbl_schueler.FIDKlasse auf tbl_klassen.IDKlasse als n:1-Beziehung mit folgenden Constraints:
+o	Löschen: wird eine Klasse in der Klassentabelle gelöscht, so sollen nicht automatisch auch die Schüler gelöscht werden. Besser ist es, das Feld FIDKlasse auf NULL zu setzen: SET NULL beim Löschen
+•	tbl_klassen.FIDRaum auf tbl_raeume.IDRaum als 1:1-Beziehung mit folgenden Constraints:
+o	Löschen: wird ein Raum gelöscht, so soll die zugehörige Klasse nicht automatisch auch gelöscht werden. Besser ist es, das Feld FIDRaum auf NULL zu setzen: SET NULL beim Löschen
+•	tbl_klassen.FIDKV auf tbl_lehrer.IDLehrer als 1:1-Beziehung mit folgenden Constraints:
+o	Löschen: SET NULL mit derselben Begründung wie in den beiden vorangegangenen Fällen
+ER-Diagramm
+Das ER-Diagramm entnehmen Sie bitte ebenfalls dem beigelegten PDF-Dokument: DB-Schema.
