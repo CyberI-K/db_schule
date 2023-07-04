@@ -1,0 +1,168 @@
+DB-Dokumentation
+Verwendete Software:
+•	DB-System: MySQL/MariaDB
+•	Dokumentations-Software: MS Word (PHPMyAdmin als Website am Webserver)
+Datenbank
+Verwendete Tabellen:
+•	tbl_raeume: Stellt die im Schulgebäude vorhandenen Räume dar
+•	tbl_lehrer: Beinhaltet sämtliche an der Schule tätigen Lehrer (unabhängig davon, ob sie Klassenvorstand einer Klasse sind oder nicht)
+•	tbl_klassen: Stellt sämtliche Klassen eines Schuljahres dar, wobei jeder Klasse eindeutig ein Raum und ein Klassenvorstand zugewiesen wird; die Klassenbezeichnung ist ebenfalls eindeutig
+•	tbl_schueler: Beinhaltet sämtliche SchülerInnen der Schule, wobei jede/r SchülerIn eindeutig in eine Klasse geht 
+Tabellen
+Bitte beachten Sie das beigelegte PDF-Dokument („Schema“), in welcher die Tabellen dokumentiert sind: DB-Schema.
+Constraints
+Generell gilt: Für sämtliche verwendeten Constraints in dieser Datenbank wird festgelegt, dass bei einem UPDATE ein CASCADE zum Einsatz gebracht wird.
+•	tbl_schueler.FIDKlasse auf tbl_klassen.IDKlasse als n:1-Beziehung mit folgenden Constraints:
+o	Löschen: wird eine Klasse in der Klassentabelle gelöscht, so sollen nicht automatisch auch die Schüler gelöscht werden. Besser ist es, das Feld FIDKlasse auf NULL zu setzen: SET NULL beim Löschen
+•	tbl_klassen.FIDRaum auf tbl_raeume.IDRaum als 1:1-Beziehung mit folgenden Constraints:
+o	Löschen: wird ein Raum gelöscht, so soll die zugehörige Klasse nicht automatisch auch gelöscht werden. Besser ist es, das Feld FIDRaum auf NULL zu setzen: SET NULL beim Löschen
+•	tbl_klassen.FIDKV auf tbl_lehrer.IDLehrer als 1:1-Beziehung mit folgenden Constraints:
+o	Löschen: SET NULL mit derselben Begründung wie in den beiden vorangegangenen Fällen
+ER-Diagramm
+Das ER-Diagramm entnehmen Sie bitte ebenfalls dem beigelegten PDF-Dokument: DB-Schema.
+DB-Dump
+Nachfolgend finden Sie zusätzlich den Datenbank-Dump zur weiteren Verwendung bzw. der Vollständigkeit halber:
+-- phpMyAdmin SQL Dump
+-- version 5.1.1
+-- https://www.phpmyadmin.net/
+--
+-- Host: 127.0.0.1
+-- Erstellungszeit: 27. Mrz 2023 um 11:18
+-- Server-Version: 10.4.21-MariaDB
+-- PHP-Version: 8.0.10
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+--
+-- Datenbank: `db_3443_schule`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_klassen`
+--
+
+CREATE TABLE `tbl_klassen` (
+  `IDKlasse` int(10) UNSIGNED NOT NULL,
+  `FIDRaum` int(10) UNSIGNED DEFAULT NULL,
+  `FIDKV` int(10) UNSIGNED DEFAULT NULL,
+  `Bezeichnung` varchar(16) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_lehrer`
+--
+
+CREATE TABLE `tbl_lehrer` (
+  `IDLehrer` int(10) UNSIGNED NOT NULL,
+  `Vorname` varchar(32) NOT NULL,
+  `Nachname` varchar(32) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_raeume`
+--
+
+CREATE TABLE `tbl_raeume` (
+  `IDRaum` int(10) UNSIGNED NOT NULL,
+  `Bezeichnung` varchar(16) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+-- --------------------------------------------------------
+
+--
+-- Tabellenstruktur für Tabelle `tbl_schueler`
+--
+
+CREATE TABLE `tbl_schueler` (
+  `IDSchueler` int(10) UNSIGNED NOT NULL,
+  `FIDKlasse` int(10) UNSIGNED DEFAULT NULL,
+  `Vorname` varchar(32) NOT NULL,
+  `Nachname` varchar(32) NOT NULL,
+  `GebDatum` date NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+--
+-- Indizes der exportierten Tabellen
+--
+
+--
+-- Indizes für die Tabelle `tbl_klassen`
+--
+ALTER TABLE `tbl_klassen`
+  ADD PRIMARY KEY (`IDKlasse`),
+  ADD UNIQUE KEY `FIDRaum` (`FIDRaum`) USING BTREE,
+  ADD UNIQUE KEY `FIDKV` (`FIDKV`) USING BTREE;
+
+--
+-- Indizes für die Tabelle `tbl_lehrer`
+--
+ALTER TABLE `tbl_lehrer`
+  ADD PRIMARY KEY (`IDLehrer`);
+
+--
+-- Indizes für die Tabelle `tbl_raeume`
+--
+ALTER TABLE `tbl_raeume`
+  ADD PRIMARY KEY (`IDRaum`),
+  ADD UNIQUE KEY `Bezeichnung` (`Bezeichnung`);
+
+--
+-- Indizes für die Tabelle `tbl_schueler`
+--
+ALTER TABLE `tbl_schueler`
+  ADD PRIMARY KEY (`IDSchueler`),
+  ADD KEY `FIDKlasse` (`FIDKlasse`);
+
+--
+-- AUTO_INCREMENT für exportierte Tabellen
+--
+
+--
+-- AUTO_INCREMENT für Tabelle `tbl_klassen`
+--
+ALTER TABLE `tbl_klassen`
+  MODIFY `IDKlasse` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle `tbl_lehrer`
+--
+ALTER TABLE `tbl_lehrer`
+  MODIFY `IDLehrer` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle `tbl_raeume`
+--
+ALTER TABLE `tbl_raeume`
+  MODIFY `IDRaum` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- AUTO_INCREMENT für Tabelle `tbl_schueler`
+--
+ALTER TABLE `tbl_schueler`
+  MODIFY `IDSchueler` int(10) UNSIGNED NOT NULL AUTO_INCREMENT;
+
+--
+-- Constraints der exportierten Tabellen
+--
+
+--
+-- Constraints der Tabelle `tbl_klassen`
+--
+ALTER TABLE `tbl_klassen`
+  ADD CONSTRAINT `tbl_klassen_ibfk_1` FOREIGN KEY (`FIDRaum`) REFERENCES `tbl_raeume` (`IDRaum`) ON DELETE SET NULL ON UPDATE CASCADE,
+  ADD CONSTRAINT `tbl_klassen_ibfk_2` FOREIGN KEY (`FIDKV`) REFERENCES `tbl_lehrer` (`IDLehrer`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+--
+-- Constraints der Tabelle `tbl_schueler`
+--
+ALTER TABLE `tbl_schueler`
+  ADD CONSTRAINT `tbl_schueler_ibfk_1` FOREIGN KEY (`FIDKlasse`) REFERENCES `tbl_klassen` (`IDKlasse`) ON DELETE SET NULL ON UPDATE CASCADE;
+COMMIT;
